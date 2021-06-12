@@ -1,5 +1,6 @@
 const express = require('express')
-const cors = require('cors') // cross domain access
+const cors = require('cors'); // cross domain access
+const { dbConnection } = require('../database/config');
 
 class Server {
 
@@ -7,9 +8,16 @@ class Server {
         this.app = express();
         this.port = process.env.PORT;
 
+        //DB connection
+        this.connectDB();
+        // middlewares definitions
         this.middlewares();
-
+        // routes definitions
         this.routes();
+    }
+
+    async connectDB() {
+        await dbConnection();
     }
 
     middlewares() {

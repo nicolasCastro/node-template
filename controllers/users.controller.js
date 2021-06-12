@@ -1,11 +1,13 @@
 const { request, response } = require('express');
-
+const bcrypt = require('bcryptjs');
+const User = require('../models/user');
+const { validationResult } = require('express-validator');
 
 const getUsers = (req = request, res = response) => {
 
-    const { 
-        name = 'No name', 
-        last_name = 'No last name', 
+    const {
+        name = 'No name',
+        last_name = 'No last name',
         id = 0
     } = req.query;
 
@@ -17,15 +19,21 @@ const getUsers = (req = request, res = response) => {
     })
 }
 
-const postUsers = (req = request, res = response) => {
-
+const postUsers = async (req = request, res = response) => {
     // params from the raw json body
-    const { name, last_name } = req.body;
+    const { name, email, password, role } = req.body;
+    const user = User({ name, email, password, role });
 
+    // encrypt password
+    const salt = bcrypt.genSaltSync();
+    user.password = bcrypt.hashSync(password, salt);
+
+    // save the user to DB
+    await user.save();
+
+    // send the result
     res.status(200).json({
-        msg: 'post api - controller',
-        name,
-        last_name
+        user
     })
 }
 
