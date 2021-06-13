@@ -3,7 +3,8 @@ const { check } = require('express-validator');
 const {
     checkFields,
     checkRole,
-    checkEmailDb
+    checkEmailDb,
+    checkUserById
 } = require('../middlewares/fields-validator');
 const {
     getUsers,
@@ -16,6 +17,7 @@ const {
 const router = new Router();
 
 router.get('/', getUsers)
+
 router.post('/', [
     check('name', 'Name is required').not().isEmpty(),
     check('password', 'Password must be at least 8 characters').isLength({ min: 6 }),
@@ -24,10 +26,20 @@ router.post('/', [
     check('role').custom(checkRole),
     checkFields
 ], postUsers)
-router.put('/:id', putUsers)
-router.patch('/', patchUsers)
-router.delete('/', deleteUsers)
 
+router.put('/:id', [
+    check('id', 'User doesn\'t exist').isMongoId(),
+    check('id').custom(checkUserById),
+    checkFields
+], putUsers)
+
+router.patch('/', patchUsers)
+
+router.delete('/:id', [
+    check('id', 'User doesn\'t exist').isMongoId(),
+    check('id').custom(checkUserById),
+    checkFields
+], deleteUsers)
 
 
 module.exports = router;

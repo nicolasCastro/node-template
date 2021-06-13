@@ -24,8 +24,15 @@ const checkEmailDb = async (email = '') => {
     if (exist) throw new Error('Email already in use');
 }
 
+const checkUserById = async (id = '') => {
+    // check if the user exists by id
+    const exist = await User.findById(id);
+    if (!exist) throw new Error('User doesn\'t exist');
+}
+
 module.exports = {
     checkFields,
     checkRole,
-    checkEmailDb
+    checkEmailDb,
+    checkUserById
 }
