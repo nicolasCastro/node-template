@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
+const { checkJWT } = require('../middlewares/utils');
 const {
     checkFields,
     checkRole,
@@ -33,13 +34,9 @@ router.put('/:id', [
     checkFields
 ], putUsers)
 
-router.patch('/', patchUsers)
-
 router.delete('/:id', [
-    check('id', 'User doesn\'t exist').isMongoId(),
-    check('id').custom(checkUserById),
+    checkJWT,
     checkFields
 ], deleteUsers)
-
 
 module.exports = router;

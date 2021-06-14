@@ -1,5 +1,7 @@
 const { request, response } = require("express");
 const { validationResult } = require("express-validator");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const Role = require("../models/role");
 const User = require("../models/user");
 
@@ -30,9 +32,17 @@ const checkUserById = async (id = '') => {
     if (!exist) throw new Error('User doesn\'t exist');
 }
 
+const checkUserLogin = async (email = '', password = '') => {
+    // check the email
+    const exist = await User.findOne({ email });
+    if (!exist || !exist.status || !bcrypt.compareSync(password, exist.password))
+        throw new Error('Email or password incorrect');
+}
+
 module.exports = {
     checkFields,
     checkRole,
     checkEmailDb,
+    checkUserLogin,
     checkUserById
 }
