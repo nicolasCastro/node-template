@@ -35,7 +35,7 @@ class Server {
     }
 
     start() {
-        this.app.listen(this.port = 3000, () => {
+        this.app.listen(this.port || 5000, () => {
             console.log(`Running on ${this.port}`);
         })
     }
